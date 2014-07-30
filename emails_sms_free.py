@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import email
+import hashlib
 import imaplib
 import json
 import os.path
 import requests
 import sys
+import time
 
 msg_ids = {}
 
@@ -29,7 +31,7 @@ def send(url, msg, i=0):
     elif r.status_code == 402:
         if i < 3:
             print('Trop de SMS ont été envoyés en trop peu de temps, ' +
-                'le script réessayera dans 30 secondes.')
+                  'le script réessayera dans 30 secondes.')
             time.sleep(30)
             send(url, msg, i+1)
         else:
@@ -44,7 +46,7 @@ def send(url, msg, i=0):
         return False
 
 
-def get_emails(imap_server, imap_user, imap_password, inbox):
+def get_emails(imap_server, imap_user, imap_password, inbox, uid):
     global msg_ids
 
     print('Connecting to '+imap_server+'… ', end='')
@@ -66,13 +68,13 @@ def get_emails(imap_server, imap_user, imap_password, inbox):
         typ, tmp_msg_ids = conn.uid('search', None, 'ALL')
         tmp_msg_ids = [i.decode('utf-8')
                        for i in tmp_msg_ids[0].split()]
-        if imap_server in msg_ids:
+        if uid in msg_ids:
             diff_msg_ids = [i
                             for i in tmp_msg_ids
-                            if i not in msg_ids[imap_server]]
+                            if i not in msg_ids[uid]]
         else:
             diff_msg_ids = tmp_msg_ids
-        msg_ids[imap_server] = tmp_msg_ids
+        msg_ids[uid] = tmp_msg_ids
         if len(diff_msg_ids) == 0:
             print("\tNo new emails")
         else:
@@ -93,7 +95,7 @@ def get_emails(imap_server, imap_user, imap_password, inbox):
                 subject = get_subject(msg_parsed['Subject'])
                 print("\tNew email from "+msg_parsed['From'] +
                       " : "+subject)
-                to_send.append({'server': imap_server,
+                to_send.append({'server_uid': uid,
                                 'id': i,
                                 'from': msg_parsed['From'],
                                 'subject': subject,
@@ -112,9 +114,8 @@ if __name__ == '__main__':
     imap_servers = [{'server': 'SERVER',
                      'login': 'LOGIN',
                      'password': 'PASS',
-                     'inbox': 'INBOX'}
-                   ]
-    save_path = os.path.expanduser('~/.mails_free_api.json')
+                     'inbox': 'INBOX'}]
+    save_path = os.path.expanduser('~/.emails_sms_free.json')
     debug = False
     url = "https://smsapi.free-mobile.fr/sendmsg?user={$user}&pass={$pass}&msg={$msg}"
     user = 'IDENT'
@@ -133,7 +134,8 @@ if __name__ == '__main__':
         to_send.extend(get_emails(imap_server['server'],
                                   imap_server['login'],
                                   imap_server['password'],
-                                  imap_server['inbox']))
+                                  imap_server['inbox'],
+                                  hashlib.md5((imap_server['server']+imap_server['login']).encode('utf-8')).hexdigest()))
 
     if debug:
         print("\nNew emails to send via SMS:")
@@ -147,7 +149,7 @@ if __name__ == '__main__':
         if send(url, msg):
             print('Sent '+str(i)+'/'+str(len(to_send)))
         else:
-            msg_ids[data['imap_server']].remove(data['id'])
+            msg_ids[data['server_uid']].remove(data['id'])
             print('Email '+str(i)+'/'+str(len(to_send))+' : Unable to send the text ' +
                   'message, remove this email from parsed list.')
         i += 1
