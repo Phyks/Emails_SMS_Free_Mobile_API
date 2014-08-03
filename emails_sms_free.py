@@ -22,27 +22,30 @@ def get_subject(subject_header):
 
 def send(url, msg, i=0):
     full_url = url.replace('{$msg}', msg)
-    r = requests.get(full_url, verify=False)
-    if r.status_code == 200:
-        return True
-    elif r.status_code == 400:
-        print('Un paramètre obligatoire est manquant.')
-        return False
-    elif r.status_code == 402:
-        if i < 3:
-            print('Trop de SMS ont été envoyés en trop peu de temps, ' +
-                  'le script réessayera dans 30 secondes.')
-            time.sleep(30)
-            send(url, msg, i+1)
-        else:
-            print('Impossible d\'envoyer le message dans la dernière minute ' +
-                  'et demie.')
+    try:
+        r = requests.get(full_url, verify=False)
+        if r.status_code == 200:
+            return True
+        elif r.status_code == 400:
+            print('Un paramètre obligatoire est manquant.')
             return False
-    elif r.status_code == 403:
-        print('Identifiants incorrects ou service non activé.')
-        return False
-    elif r.status_code == 500:
-        print('Erreur côté serveur.')
+        elif r.status_code == 402:
+            if i < 3:
+                print('Trop de SMS ont été envoyés en trop peu de temps, ' +
+                    'le script réessayera dans 30 secondes.')
+                time.sleep(30)
+                send(url, msg, i+1)
+            else:
+                print('Impossible d\'envoyer le message dans la dernière minute ' +
+                    'et demie.')
+                return False
+        elif r.status_code == 403:
+            print('Identifiants incorrects ou service non activé.')
+            return False
+        elif r.status_code == 500:
+            print('Erreur côté serveur.')
+            return False
+    except requests.exceptions.RequestException:
         return False
 
 
