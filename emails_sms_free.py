@@ -20,10 +20,9 @@ def get_subject(subject_header):
         return tmp[0].decode(tmp[1])
 
 
-def send(url, msg, i=0):
-    full_url = url.replace('{$msg}', msg)
+def send(url, user, password, msg, i=0):
     try:
-        r = requests.get(full_url, verify=False)
+        r = requests.get(url, params={'user': user, 'pass': password, 'msg': msg}, verify=False)
         if r.status_code == 200:
             return True
         elif r.status_code == 400:
@@ -120,7 +119,7 @@ if __name__ == '__main__':
                      'inbox': 'INBOX'}]
     save_path = os.path.expanduser('~/.emails_sms_free.json')
     debug = False
-    url = "https://smsapi.free-mobile.fr/sendmsg?user={$user}&pass={$pass}&msg={$msg}"
+    url = "https://smsapi.free-mobile.fr/sendmsg"
     user = 'IDENT'
     password = 'PASS'
     # YOU SHOULD NOT HAVE TO EDIT BELOW
@@ -149,7 +148,7 @@ if __name__ == '__main__':
         msg = ('New email from '+data['from']+'\n' +
                data['subject']+'\n' +
                str(data['content'][:700])+'...')
-        if send(url, msg):
+        if send(url, user, password, msg):
             print('Sent '+str(i)+'/'+str(len(to_send)))
         else:
             msg_ids[data['server_uid']].remove(data['id'])
