@@ -33,7 +33,7 @@ def send(url, user, password, msg, i=0):
                 print('Trop de SMS ont été envoyés en trop peu de temps, ' +
                     'le script réessayera dans 30 secondes.')
                 time.sleep(30)
-                send(url, msg, i+1)
+                send(url, user, password, msg, i+1)
             else:
                 print('Impossible d\'envoyer le message dans la dernière minute ' +
                     'et demie.')
