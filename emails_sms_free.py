@@ -83,6 +83,7 @@ def get_emails(imap_server, imap_user, imap_password, inbox, uid):
             for i in diff_msg_ids:
                 typ, msg_data = conn.uid('fetch', i, '(RFC822)')
                 msg_parsed = email.message_from_bytes(msg_data[0][1])
+                text = ""
                 for part in msg_parsed.walk():
                     if part.get_content_charset() is None:
                         # We cannot know the character set, so return decoded "something"
