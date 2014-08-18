@@ -17,7 +17,10 @@ def get_subject(subject_header):
     if tmp[1] is None:
         return str(tmp[0])
     else:
-        return tmp[0].decode(tmp[1])
+        try:
+            return tmp[0].decode(tmp[1])
+        except LookupError:
+            return "--Unable to fetch subject--"
 
 
 def send(url, user, password, msg, i=0):
