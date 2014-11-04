@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding:utf-8-*-
 
 import email
 import hashlib
@@ -53,8 +54,7 @@ def send(url, user, password, msg, i=0):
 
 def get_emails(imap_server, imap_user, imap_password, inbox, uid):
     global msg_ids
-
-    print('Connecting to '+imap_server+'… ', end='')
+    print('Connecting to '+imap_server+'… ', end=' ')
     conn = imaplib.IMAP4_SSL(imap_server)
     print('Connected')
     to_send = []
