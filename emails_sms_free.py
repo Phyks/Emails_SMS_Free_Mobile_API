@@ -1,14 +1,22 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding:utf-8-*-
 
-import email
-import hashlib
-import imaplib
-import json
-import os.path
-import requests
-import sys
-import time
+from __future__ import print_function #print function python 2 and 3 compatible
+
+try:
+    #import urllib.request as urllib_request #for python 3
+	import email
+	import hashlib
+	import imaplib
+	import json
+	import os.path
+	import requests
+	import sys
+	import time
+except ImportError:
+	#import urllib2 as urllib_request # for python 2
+	import simplejson as json
+	print('Error importing lib as pyhton3, switching to python 2 libraries')
 
 msg_ids = {}
 
