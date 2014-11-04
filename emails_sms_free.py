@@ -3,16 +3,18 @@
 
 from __future__ import print_function #print function python 2 and 3 compatible
 
+import email
+import hashlib
+import imaplib
+import os.path
+import requests
+import sys
+import time
+
+#This is used to import library depending on the python version used.
 try:
-    #import urllib.request as urllib_request #for python 3
-	import email
-	import hashlib
-	import imaplib
+	#import urllib.request as urllib_request #for python 3
 	import json
-	import os.path
-	import requests
-	import sys
-	import time
 except ImportError:
 	#import urllib2 as urllib_request # for python 2
 	import simplejson as json
