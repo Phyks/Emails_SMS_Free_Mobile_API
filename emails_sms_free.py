@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8-*-
 
-from __future__ import print_function #print function python 2 and 3 compatible
+from __future__ import print_function
 
 import email
 import hashlib
@@ -11,14 +11,13 @@ import requests
 import sys
 import time
 
-#This is used to import library depending on the python version used.
 try:
-	#for python 3
-	import json
+    # For python 3
+    import json
 except ImportError:
-	# for python 2
-	import simplejson as json
-	print('Error importing lib as python3, switching to python 2 libraries')
+    # For python 2
+    import simplejson as json
+    print('Error importing lib as python3, switching to python 2 libraries')
 
 msg_ids = {}
 
@@ -45,12 +44,12 @@ def send(url, user, password, msg, i=0):
         elif r.status_code == 402:
             if i < 3:
                 print('Trop de SMS ont été envoyés en trop peu de temps, ' +
-                    'le script réessayera dans 30 secondes.')
+                      'le script réessayera dans 30 secondes.')
                 time.sleep(30)
                 send(url, user, password, msg, i+1)
             else:
                 print('Impossible d\'envoyer le message dans la dernière minute ' +
-                    'et demie.')
+                      'et demie.')
                 return False
         elif r.status_code == 403:
             print('Identifiants incorrects ou service non activé.')
@@ -64,7 +63,7 @@ def send(url, user, password, msg, i=0):
 
 def get_emails(imap_server, imap_user, imap_password, inbox, uid):
     global msg_ids
-    
+
     print('Connecting to '+imap_server+'… ', end='')
     conn = imaplib.IMAP4_SSL(imap_server)
     print('Connected')
