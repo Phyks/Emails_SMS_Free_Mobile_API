@@ -13,12 +13,12 @@ import time
 
 #This is used to import library depending on the python version used.
 try:
-	#import urllib.request as urllib_request #for python 3
+	#for python 3
 	import json
 except ImportError:
-	#import urllib2 as urllib_request # for python 2
+	# for python 2
 	import simplejson as json
-	print('Error importing lib as pyhton3, switching to python 2 libraries')
+	print('Error importing lib as python3, switching to python 2 libraries')
 
 msg_ids = {}
 
@@ -64,7 +64,8 @@ def send(url, user, password, msg, i=0):
 
 def get_emails(imap_server, imap_user, imap_password, inbox, uid):
     global msg_ids
-    print('Connecting to '+imap_server+'… ', end=' ')
+    
+    print('Connecting to '+imap_server+'… ', end='')
     conn = imaplib.IMAP4_SSL(imap_server)
     print('Connected')
     to_send = []
