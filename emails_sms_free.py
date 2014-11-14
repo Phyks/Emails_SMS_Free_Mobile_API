@@ -1,13 +1,24 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+# -*- coding:utf-8-*-
+
+from __future__ import print_function #print function python 2 and 3 compatible
 
 import email
 import hashlib
 import imaplib
-import json
 import os.path
 import requests
 import sys
 import time
+
+#This is used to import library depending on the python version used.
+try:
+	#for python 3
+	import json
+except ImportError:
+	# for python 2
+	import simplejson as json
+	print('Error importing lib as python3, switching to python 2 libraries')
 
 msg_ids = {}
 
@@ -53,7 +64,7 @@ def send(url, user, password, msg, i=0):
 
 def get_emails(imap_server, imap_user, imap_password, inbox, uid):
     global msg_ids
-
+    
     print('Connecting to '+imap_server+'… ', end='')
     conn = imaplib.IMAP4_SSL(imap_server)
     print('Connected')
