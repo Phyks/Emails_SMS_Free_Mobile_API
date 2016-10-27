@@ -98,12 +98,11 @@ def get_emails(imap_server, imap_user, imap_password, inbox, uid):
                 msg_parsed = email.message_from_bytes(msg_data[0][1])
                 text = ""
                 for part in msg_parsed.walk():
-                    if part.get_content_charset() is None:
+                    charset = charset = part.get_content_charset()
+                    if note charset:
                         # We cannot know the character set, so return decoded "something"
                         text = part.get_payload(decode=True)
                         continue
-
-                    charset = part.get_content_charset()
 
                     if part.get_content_type() == 'text/plain':
                         text = part.get_payload(decode=True).decode(str(charset))
